@@ -70,8 +70,8 @@ class Lasers(pygame.sprite.Sprite):
                 self.rect.y += 2
 
         elif self.ammo == 1:  # spread Shot
-            self.rect.x += self.x_force
-            self.rect.y += self.y_force
+            self.rect.y -= self.x_force
+            self.rect.x += self.y_force
 
         if self.player_laser == True:  # Determine bullet sprite
             self.image = self.frames[self.ammo + 1]

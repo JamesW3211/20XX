@@ -50,6 +50,10 @@ class Enemy(pygame.sprite.Sprite):
             sprite_sheet = SpriteSheet("assets/Images/sprite_sheet.png")
             image = sprite_sheet.get_image(0, 24, 24, 24);  # (x, y, width, height)
             self.animation_frames.append(image)
+            image = sprite_sheet.get_image(0, 24, 24, 24);  # (x, y, width, height)
+            self.animation_frames.append(image)
+            image = sprite_sheet.get_image(0, 24, 24, 24);  # (x, y, width, height)
+            self.animation_frames.append(image)
 
             # standard variables
         self.image = self.animation_frames[0]  # set initial frame
@@ -71,10 +75,10 @@ class Enemy(pygame.sprite.Sprite):
     '''
 
     def update(self):
-        # # Animation Frames
-        # if pygame.time.get_ticks() > self.animation_time + 50:
-        #     self.animation_time = pygame.time.get_ticks()
-        #     self.frame = self.frame + 1
+        #Animation Frames
+        if pygame.time.get_ticks() > self.animation_time + 50:
+            self.animation_time = pygame.time.get_ticks()
+            self.frame = self.frame + 1
 
         # Dead
         if self.type == 0:  # explodey bits
@@ -93,7 +97,7 @@ class Enemy(pygame.sprite.Sprite):
 
         # Powerups
         if self.type > 0 and self.type < 5:
-            self.rect.y -= 1;
+            self.rect.y += 1;
             self.frame = 0
 
         # Enemies

@@ -15,7 +15,7 @@ from inc_Lasers import Lasers
 from inc_Level import Level
 from inc_Background import BG
 from inc_Star import Star
-
+from inc_Bullet import Bullet
 
 
 # ----- Initialization -----
@@ -78,6 +78,7 @@ player = Player()  # player (from the inc_Player.py class)
 enemy_list = pygame.sprite.Group()  # Group of all enemy sprites
 laser_list = pygame.sprite.Group()  # Group of all laser sprites
 upgrade_group = pygame.sprite.Group()
+bullet_list = pygame.sprite.Group()
 
 # ----- Functions -----
 ''' Game Text
@@ -185,7 +186,8 @@ def main():
 
         # Enemies
         if level_data.enemy_flag != False:  # spawn an enemy
-            enemy = Enemy(level_data.enemy_flag['type'], level_data.enemy_flag['x'], level_data.enemy_flag['y']);
+            enemy = Enemy(level_data.enemy_flag['type'], level_data.enemy_flag['x'], level_data.enemy_flag['y'],
+                          bullet_list)
             enemy_list.add(enemy)
             level_data.enemy_flag = False
 
@@ -210,6 +212,9 @@ def main():
                 enemy.die()
                 sfx_player_shoot.play()
 
+        collision_bullets = pygame.sprite.spritecollide(player, bullet_list, False, pygame.sprite.collide_mask)
+        for bullet in collision_bullets:
+            player.death()
 
 
 
@@ -239,6 +244,7 @@ def main():
             if pygame.time.get_ticks() > player.invincible_timer:
                 player.invincible_timer = 0
 
+
         #UPDATES
         player.update()
 
@@ -251,6 +257,7 @@ def main():
 
 
 
+
         #DRAW TO SCREEN
         draw_screen.fill((0,0,0))
 
@@ -259,10 +266,14 @@ def main():
         # Draw the sprites
         # Note that these are drawn in the order they are called (overlap!)
         bg_group.draw(draw_screen)
+        bullet_list.draw(draw_screen)
         enemy_list.draw(draw_screen)
         laser_list.draw(draw_screen)
         player.draw(draw_screen)
         level_data.draw(draw_screen)
+
+
+
 
 
         # UI elements

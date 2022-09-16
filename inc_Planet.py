@@ -8,8 +8,8 @@ class Planet(pygame.sprite.Sprite):
     def __init__(self):
         super(Planet, self).__init__()
         self.planet_01 = pygame.image.load('assets/Images/planet2.png').convert_alpha()
-        self.planet_02 = pygame.image.load('assets/Images/planet2.png').convert_alpha()
-        self.planet_03 = pygame.image.load('assets/Images/planet3.png').convert_alpha()
+        self.planet_02 = pygame.image.load('assets/Images/planet4.png').convert_alpha()
+        self.planet_03 = pygame.image.load('assets/Images/planet2.png').convert_alpha()
         self.planet_04 = pygame.image.load('assets/Images/planet2.png').convert_alpha()
         self.planet_05 = pygame.image.load('assets/Images/planet3.png').convert_alpha()
         self.img_planets = [self.planet_01,

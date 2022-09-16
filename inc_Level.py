@@ -74,6 +74,3 @@ class Level(object):
     def draw(self, win):
 
         self.objects.draw(win)
-
-
-

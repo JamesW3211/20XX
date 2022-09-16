@@ -92,10 +92,6 @@ class Player(pygame.sprite.Sprite):
             self.rect.x -= 2
             self.animation_status = "LEFT"
 
-
-
-
-
     def move_up(self):
         if self.rect.y > 0:
             self.rect.y -= 2

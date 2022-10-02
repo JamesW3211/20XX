@@ -65,7 +65,8 @@ font = pygame.font.Font("assets/Fonts/upheavtt.ttf", 14)
 # Load Sound Effect(s) and Music
 sfx_player_shoot = pygame.mixer.Sound("assets/Audio/SF1.wav")
 sfx_player_shoot.set_volume(0.5)  # change the volume of the sfx, can use for music too
-sfx_enemy_die = pygame.mixer.Sound("assets/Audio/SF10.wav")
+sfx_enemy_die = pygame.mixer.Sound("assets/Audio/mixkit-whip-small-explosion-1519.wav")
+sfx_enemy_die.set_volume(0.3)  # change the volume of the sfx, can use for music too
 # sfx_enemy_die.set_volume(0.1)
 # Music
 pygame.mixer.music.load("assets/Audio/93727__zgump__tr-loop-0416.wav")
@@ -141,20 +142,38 @@ def main():
 
                 if player.gun_loaded == 1:
                     if player.ammo_type == 0:
-                        player.fire_delay = 200
+                        player.fire_delay = 150
                     if player.ammo_type == 1:
-                        laser = Lasers(player.rect.x, player.rect.y, enemy_list, player.ammo_type, True)
+                        # laser = Lasers(player.rect.x+10, player.rect.y, enemy_list, player.ammo_type, True)
+                        # laser.y_force = 1
+                        # laser_list.add(laser)
+                        # laser = Lasers(player.rect.x+12, player.rect.y, enemy_list, player.ammo_type, True)
+                        # laser.y_force = -1
+                        # laser_list.add(laser)
+                        laser = Lasers(player.rect.x+4 , player.rect.y, enemy_list, player.ammo_type, True)
+                        laser_list.add(laser)
+                        laser = Lasers(player.rect.x + 18, player.rect.y, enemy_list, player.ammo_type, True)
+                        laser_list.add(laser)
+
+                        player.fire_delay = 150
+                    if player.ammo_type == 2:
+                        laser = Lasers(player.rect.x+10, player.rect.y, enemy_list, player.ammo_type, True)
                         laser.y_force = 1
                         laser_list.add(laser)
-                        laser = Lasers(player.rect.x, player.rect.y, enemy_list, player.ammo_type, True)
+                        laser = Lasers(player.rect.x+12, player.rect.y, enemy_list, player.ammo_type, True)
                         laser.y_force = -1
                         laser_list.add(laser)
-                        player.fire_delay = 500
+                        # laser = Lasers(player.rect.x+4 , player.rect.y, enemy_list, player.ammo_type, True)
+                        # laser_list.add(laser)
+                        # laser = Lasers(player.rect.x + 18, player.rect.y, enemy_list, player.ammo_type, True)
+                        # laser_list.add(laser)
+
+                        player.fire_delay = 200
                     if player.ammo_type == 4:
                         player.laser_part -= 1
                         if player.laser_part < 1:
                             player.laser_part = 5
-                            player.fire_delay = 300
+                            player.fire_delay = 150
                         else:
                             player.fire_delay = 50
 
@@ -212,9 +231,17 @@ def main():
                 enemy.die()
                 sfx_player_shoot.play()
 
+
+
         collision_bullets = pygame.sprite.spritecollide(player, bullet_list, False, pygame.sprite.collide_mask)
         for bullet in collision_bullets:
             player.death()
+
+        enemy_player = pygame.sprite.spritecollide(player, enemy_list, False, pygame.sprite.collide_mask)
+        for enemy in enemy_player:
+            player.death()
+
+
 
 
 
@@ -226,7 +253,8 @@ def main():
                     if enemy.type > 9:
                         enemy.die()
                         score += 100
-                        sfx_player_shoot.play()
+                        sfx_enemy_die.play()
+
 
             if laser.player_laser == False:  # Enemy Laser hits Player
                 if pygame.sprite.collide_mask(laser, player):
@@ -249,7 +277,7 @@ def main():
         player.update()
 
         # "update" the sprite groups
-        enemy_list.update()
+        enemy_list.update(player)
         laser_list.update()
         level_data.update()
         bg_group.update()

@@ -24,6 +24,8 @@ class Lasers(pygame.sprite.Sprite):
         self.frames.append(image) # Frame 2 = Enemy
         image = sprite_sheet.get_image(24, 38, 2, 10)
         self.frames.append(image)  # Frame 2 = Enemy
+        image = sprite_sheet.get_image(24, 38, 2, 10)
+        self.frames.append(image)  # Frame 2 = Enemy
 
 
         self.mask = pygame.mask.from_surface(image) # create a mask for collision (same for both lasers)
@@ -54,6 +56,8 @@ class Lasers(pygame.sprite.Sprite):
             self.y_force = 0
         elif self.ammo == 1:  # "Homing"
             self.x_force = self.speed
+        elif self.ammo == 2:  # "Homing"
+            self.x_force = self.speed
 
 
     '''  Update
@@ -73,16 +77,26 @@ class Lasers(pygame.sprite.Sprite):
             self.rect.y -= self.x_force
             self.rect.x += self.y_force
 
+        elif self.ammo == 2:  # spread Shot
+            self.rect.y -= self.x_force
+            self.rect.x += self.y_force
+
+
         if self.player_laser == True:  # Determine bullet sprite
             self.image = self.frames[self.ammo + 1]
         else:
             self.image = self.frames[0]
+
+
 
         # bullet offscreen
         if self.rect.x < -16:
             self.kill()
         if self.rect.x > 320:
             self.kill()
+        if self.rect.y < 0:
+            self.kill()
+
 
     ''' Draw
         Places the current animation frame image onto the passed screen

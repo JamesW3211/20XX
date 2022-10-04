@@ -21,7 +21,6 @@ class Enemy(pygame.sprite.Sprite):
         self.shoot_time = pygame.time.get_ticks() + random.randrange(0, 1000)  # delay between firing
         self.gun_loaded = 0  # ready to fire!
         self.speed = -1  # how "fast" we scoot along the screen (negative = left)
-        self.health = 1
         self.type = enemy_type
 
         self.load_images(self.type, start_x, start_y)
@@ -41,7 +40,8 @@ class Enemy(pygame.sprite.Sprite):
         self.state = self.states["FLY_DOWN"]
         self.init_State = True
         self.bullets = bullets
-        self.health = 0
+        # self.hp = 0
+
 
     def load_images(self, enemy_type, start_x, start_y):
         # Images and Animations for Enemy Planes
@@ -50,7 +50,11 @@ class Enemy(pygame.sprite.Sprite):
             sprite_sheet = SpriteSheet("assets/Images/sprite_sheet16.png")
             image = sprite_sheet.get_image(0, 0, 33, 33)
             self.animation_frames.append(image)
+            image = sprite_sheet.get_image(0, 0, 33, 33)
+            self.animation_frames.append(image)
             image = sprite_sheet.get_image(33, 0, 33, 33)
+            self.animation_frames.append(image)
+            image = sprite_sheet.get_image(66, 0, 33, 33)
             self.animation_frames.append(image)
             image = sprite_sheet.get_image(66, 0, 33, 33)
             self.animation_frames.append(image)
@@ -68,6 +72,7 @@ class Enemy(pygame.sprite.Sprite):
             self.animation_frames.append(image)
             image = sprite_sheet.get_image(0, 48, 24, 24);  # (x, y, width, height)
             self.animation_frames.append(image)
+            self.hp = 3
 
         if enemy_type == 12:
             sprite_sheet = SpriteSheet("assets/Images/sprite_sheet.png")
@@ -77,6 +82,7 @@ class Enemy(pygame.sprite.Sprite):
             self.animation_frames.append(image)
             image = sprite_sheet.get_image(0, 24, 24, 24);  # (x, y, width, height)
             self.animation_frames.append(image)
+            self.hp = 25
 
         if enemy_type == 13:
             sprite_sheet = SpriteSheet("assets/Images/sprite_sheet.png")
@@ -86,6 +92,7 @@ class Enemy(pygame.sprite.Sprite):
             self.animation_frames.append(image)
             image = sprite_sheet.get_image(48, 24, 24, 24);  # (x, y, width, height)
             self.animation_frames.append(image)
+            self.hp = 5
 
         if enemy_type == 14:
             sprite_sheet = SpriteSheet("assets/Images/sprite_sheet.png")
@@ -95,6 +102,7 @@ class Enemy(pygame.sprite.Sprite):
             self.animation_frames.append(image)
             image = sprite_sheet.get_image(0, 24, 24, 24);  # (x, y, width, height)
             self.animation_frames.append(image)
+            self.hp = 5
 
 
         self.image = self.animation_frames[0]  # set initial frame
@@ -106,30 +114,29 @@ class Enemy(pygame.sprite.Sprite):
         self.animation_time = 0  # animation delay speed
 
 
+    def get_hit(self):
+        self.hp -= 1
+        if self.hp <= 0:
+            self.die()
+
+
     def die(self):
         self.type = 0
         self.frame = 0
         self.load_images(self.type, self.rect.x, self.rect.y)
-        if pygame.time.get_ticks() > self.animation_time + 50:
-            self.animation_time = pygame.time.get_ticks()
-            self.frame = self.frame + 1
-            if self.frame > 2:  # reset animation loop
-                self.frame = 0
-
-        self.image = self.animation_frames[self.frame]
 
 
     def update(self, player):
 
-        #Animation Frames
-        if pygame.time.get_ticks() > self.animation_time + 50:
-            self.animation_time = pygame.time.get_ticks()
-            self.frame = self.frame + 1
-
-
         # PowerUps when Dead
         if self.type == 0:  # explodey bits
-            if self.frame > 2:
+            # Animation Frames
+            if pygame.time.get_ticks() > self.animation_time + 50:
+                self.animation_time = pygame.time.get_ticks()
+                self.frame = self.frame + 1
+
+                self.image = self.animation_frames[self.frame]
+            if self.frame > 3:
                 ran = [1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
                 # turn into powerup?
                 powerup = random.choice(ran)
@@ -149,7 +156,7 @@ class Enemy(pygame.sprite.Sprite):
 
         # Enemies
         if self.type == 10:  # Scooter
-            self.health = 4
+
             self.rect.y -= self.speed  # scoot across the screen this fast
 
             # if pygame.time.get_ticks() > self.shoot_time + 1000:
@@ -232,7 +239,7 @@ class Enemy(pygame.sprite.Sprite):
             self.image = self.animation_frames[self.frame]
 
         if self.type == 14:  # Scooter
-            self.health = 2
+
             self.rect.y -= self.speed  # scoot across the screen this fast
 
             # if pygame.time.get_ticks() > self.shoot_time + 1000:
@@ -275,22 +282,22 @@ class Enemy(pygame.sprite.Sprite):
 
 
 
-        #     self.state = self.states["ATTACK"]
-        #     self.init_State = True
+            # self.state = self.states["ATTACK"]
+            # self.init_State = True
 
 
     def state_attack(self):
         # bullet handling
-        if self.rect.y == 50:
-            self.vel_x *= -1
-        elif self.rect.x + self.rect.width >= 240:
-            self.vel_x *= -1
-        if self.init_State:
-            #self.vel_y = 0
-            self.rect.y = 50
-            self.rect.x += 1
-        if self.rect.x == 240:
-            self.rect.x -= 5
+        # if self.rect.y == 50:
+        #     self.vel_x *= -1
+        # elif self.rect.x + self.rect.width >= 240:
+        #     self.vel_x *= -1
+        # if self.init_State:
+        #     #self.vel_y = 0
+        #     self.rect.y = 50
+        #     self.rect.x += 1
+        # if self.rect.x == 240:
+        #     self.rect.x -= 5
 
 
         self.bullet_timer -= 1

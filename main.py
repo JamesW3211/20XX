@@ -16,6 +16,7 @@ from inc_Level import Level
 from inc_Background import BG
 from inc_Star import Star
 from inc_Bullet import Bullet
+from inc_particle_spawner import ParticleSpawner
 
 
 # ----- Initialization -----
@@ -65,11 +66,14 @@ font = pygame.font.Font("assets/Fonts/upheavtt.ttf", 14)
 # Load Sound Effect(s) and Music
 sfx_player_shoot = pygame.mixer.Sound("assets/Audio/SF1.wav")
 sfx_player_shoot.set_volume(0.5)  # change the volume of the sfx, can use for music too
-sfx_enemy_die = pygame.mixer.Sound("assets/Audio/mixkit-whip-small-explosion-1519.wav")
+sfx_enemy_die = pygame.mixer.Sound("assets/Audio/SF10.wav")
 sfx_enemy_die.set_volume(0.3)  # change the volume of the sfx, can use for music too
 # sfx_enemy_die.set_volume(0.1)
 # Music
 pygame.mixer.music.load("assets/Audio/93727__zgump__tr-loop-0416.wav")
+
+
+
 
 # Setup the sprites
 player = Player()  # player (from the inc_Player.py class)
@@ -80,6 +84,7 @@ enemy_list = pygame.sprite.Group()  # Group of all enemy sprites
 laser_list = pygame.sprite.Group()  # Group of all laser sprites
 upgrade_group = pygame.sprite.Group()
 bullet_list = pygame.sprite.Group()
+particle_spawner = ParticleSpawner()
 
 # ----- Functions -----
 ''' Game Text
@@ -117,6 +122,7 @@ def main():
 
     player_alive = True  # Flag used to keep the game loop going
     score = 0  # Player's score!
+    screen_shake = 0
 
     # Start the music loop
     # Enable music Loop by passing -1 to "repeat"
@@ -227,9 +233,12 @@ def main():
                 player.ammo_type = enemy.type
                 enemy.kill()
 
-            if enemy.type > 9:
+            if enemy.type > 9 :
                 enemy.die()
                 sfx_player_shoot.play()
+
+
+
 
 
 
@@ -251,9 +260,22 @@ def main():
                 enemy_hit_list = pygame.sprite.spritecollide(laser, enemy_list, False, pygame.sprite.collide_mask)
                 for enemy in enemy_hit_list:
                     if enemy.type > 9:
-                        enemy.die()
+                        # print(enemy.hp)
+                        screen_shake = 10
+                        particle_spawner.spawn_particles((laser.rect.x, laser.rect.y))
+                        enemy.get_hit()
+
+
+
                         score += 100
                         sfx_enemy_die.play()
+                    # if enemy.type == 12:
+                    #
+                    #     particle_spawner.spawn_particles((laser.rect.x, laser.rect.y))
+                    #     enemy.die()
+                    #     score += 100
+                    #     sfx_player_shoot.play()
+
 
 
             if laser.player_laser == False:  # Enemy Laser hits Player
@@ -272,11 +294,19 @@ def main():
             if pygame.time.get_ticks() > player.invincible_timer:
                 player.invincible_timer = 0
 
+        if screen_shake > 0:
+            screen_shake -= 1
+        render_offset = [0, 0]
+        if screen_shake:
+            render_offset[0] = random.randint(0, 8) - 4
+            render_offset[1] = random.randint(0, 8) - 4
+
 
         #UPDATES
         player.update()
 
         # "update" the sprite groups
+        particle_spawner.update()
         enemy_list.update(player)
         laser_list.update()
         level_data.update()
@@ -299,6 +329,7 @@ def main():
         laser_list.draw(draw_screen)
         player.draw(draw_screen)
         level_data.draw(draw_screen)
+        particle_spawner.particle_group.draw(draw_screen)
 
 
 
@@ -310,7 +341,7 @@ def main():
         game_text(text, 160, 10, True)
 
         # Scale the draw screen to display screen
-        screen.blit(pygame.transform.scale(draw_screen, screen.get_rect().size), (0, 0))
+        screen.blit(pygame.transform.scale(draw_screen, screen.get_rect().size), (render_offset))
         # place the screen on the display via pygame
         pygame.display.flip()
 

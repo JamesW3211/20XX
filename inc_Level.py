@@ -76,12 +76,25 @@ class Level(object):
             1750: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
             1800: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
             1825: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
-            # 1750: {'name': "ENEMY", 'type': 12, 'x': 220, 'y': -50},
+            2050: {'name': "BACKGROUND2", 'type': 15, 'x': 0, 'y': 0},
+            2225: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
+            2250: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
+            2200: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
+            5025: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
+            5000: {'name': "ENEMY", 'type': 10, 'x': 80, 'y': -50},
+            5010: {'name': "ENEMY", 'type': 10, 'x': 100, 'y': -50},
+            5020: {'name': "ENEMY", 'type': 10, 'x': 120, 'y': -50},
+
+            3330: {'name': "ENEMY", 'type': 10, 'x': 130, 'y': -50},
+            3340: {'name': "ENEMY", 'type': 10, 'x': 150, 'y': -50},
+            3350: {'name': "ENEMY", 'type': 10, 'x': 170, 'y': -50},
 
         }
         # Flag variables signal when to spawn things outside of the level handler
         self.enemy_flag = False
         self.background_flag = False
+        self.background_flag2 = False
+        self.cloud_flag = False
 
         # Load the sprite sheet, depending on the "type"
 
@@ -101,6 +114,9 @@ class Level(object):
                 self.enemy_flag = self.script[self.distance]
             if self.script[self.distance]["name"] == "BACKGROUND":
                 self.background_flag = True
+            if self.script[self.distance]["name"] == "BACKGROUND2":
+                self.background_flag2 = True
+                self.cloud_flag = True
             del (self.script[self.distance])
 
 

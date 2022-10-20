@@ -1,7 +1,3 @@
-''' 20XX
-    Created by JamesW
-    Inspired by 1942, 1943, 1944, 19XX, and so on.
-'''
 
 # ---- Imports ----
 import os
@@ -14,15 +10,18 @@ from inc_Enemy import Enemy
 from inc_Lasers import Lasers
 from inc_Level import Level
 from inc_Background import BG
+from inc_Background import BG2
+from inc_Background import Clouds
 from inc_Star import Star
 from inc_Bullet import Bullet
 from inc_particle_spawner import ParticleSpawner
+from inc_Clouds import Cloud
 
 
 # ----- Initialization -----
 # set Environment variables; default initial Window Position
-x = 150
-y = 25
+x = 250
+y = 125
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x, y)
 
 WIDTH = 320
@@ -48,6 +47,14 @@ pygame.mouse.set_visible(False)
 
 bg = BG()
 bg_group = pygame.sprite.Group()
+
+bg2 = BG2()
+bg_group2 = pygame.sprite.Group()
+
+cloud = Clouds()
+clouds_group = pygame.sprite.Group()
+
+
 
 
 background = pygame.Surface([640, 480])
@@ -127,6 +134,12 @@ def main():
     # Start the music loop
     # Enable music Loop by passing -1 to "repeat"
     pygame.mixer.music.play(-1)  # Starts the music
+
+    max_clouds = 5
+    current_num_clouds = 0
+    cloud_timer = pygame.time.get_ticks()
+
+
 
     # Actual game loop
     while player_alive:
@@ -224,6 +237,31 @@ def main():
             #draw_screen.fill((0, 0, 255))
             level_data.background_flag = False
 
+        if level_data.background_flag2 != False:  # background
+
+            bg_group2.add(bg2)
+            #background.fill((30, 144, 255))
+            print("background was added")
+
+
+
+            # draw_screen.fill((0, 0, 255))
+            level_data.background_flag2 = False
+
+        if level_data.cloud_flag != False:  # background
+
+            if pygame.time.get_ticks() >= cloud_timer + 4000:
+
+            # if current_num_clouds >= max_clouds:
+            #     pass
+            # else:
+                new_cloud = Cloud()
+                print("cloud spawned")
+                clouds_group.add(new_cloud)
+                current_num_clouds += 1
+                cloud_timer = pygame.time.get_ticks()
+
+            # level_data.cloud_flag = False
 
 
         enemy_hit_list = pygame.sprite.spritecollide(player, enemy_list, False, pygame.sprite.collide_mask)
@@ -311,6 +349,8 @@ def main():
         laser_list.update()
         level_data.update()
         bg_group.update()
+        clouds_group.update()
+        bg_group2.update()
 
 
 
@@ -323,7 +363,12 @@ def main():
 
         # Draw the sprites
         # Note that these are drawn in the order they are called (overlap!)
+
         bg_group.draw(draw_screen)
+
+        bg_group2.draw(draw_screen)
+        clouds_group.draw(draw_screen)
+
         bullet_list.draw(draw_screen)
         enemy_list.draw(draw_screen)
         laser_list.draw(draw_screen)

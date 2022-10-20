@@ -1,4 +1,7 @@
-
+''' 20XX
+    Created by JamesW
+    Inspired by 1942, 1943, 1944, 19XX, and so on.
+'''
 # ---- Imports ----
 import os
 import pygame

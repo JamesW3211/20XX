@@ -20,30 +20,19 @@ class Level(object):
         # Load the script [from file]
         self.script = {
             201: {'name': "BACKGROUND", 'type': 11, 'x': 0, 'y': 0},
-            300: {'name': "ENEMY", 'type': 10, 'x': 80, 'y': -50},
-            310: {'name': "ENEMY", 'type': 10, 'x': 100, 'y': -50},
-            320: {'name': "ENEMY", 'type': 10, 'x': 120, 'y': -50},
 
-            530: {'name': "ENEMY", 'type': 10, 'x': 130, 'y': -50},
-            540: {'name': "ENEMY", 'type': 10, 'x': 150, 'y': -50},
-            550: {'name': "ENEMY", 'type': 10, 'x': 170, 'y': -50},
+            300: {'name': "ENEMY", 'type': 16, 'x': 100, 'y': -50},
+            301: {'name': "ENEMY", 'type': 10, 'x': 200, 'y': -50},
 
-            650: {'name': "ENEMY", 'type': 13, 'x': 200, 'y': -50},
-            660: {'name': "ENEMY", 'type': 13, 'x': -40, 'y': -50},
-            670: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
-            700: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
-            720: {'name': "ENEMY", 'type': 13, 'x': 150, 'y': -50},
-            730: {'name': "ENEMY", 'type': 13, 'x': 330, 'y': -50},
-            740: {'name': "ENEMY", 'type': 13, 'x': 150, 'y': -50},
-            750: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
+            600: {'name': "ENEMY", 'type': 14, 'x': 150, 'y': -100},
 
-            # 800: {'name': "ENEMY", 'type': 10, 'x': 50, 'y': -50},
-            # 850: {'name': "ENEMY", 'type': 10, 'x': 100, 'y': -50},
-            # 900: {'name': "ENEMY", 'type': 10, 'x': 120, 'y': -50},
-            # 920: {'name': "ENEMY", 'type': 10, 'x': 160, 'y': -50},
-            # 940: {'name': "ENEMY", 'type': 10, 'x': 190, 'y': -50},
-            # 960: {'name': "ENEMY", 'type': 10, 'x': 210, 'y': -50},
-            # 961: {'name': "ENEMY", 'type': 10, 'x': 230, 'y': -50},
+            800: {'name': "ENEMY", 'type': 14, 'x': 50, 'y': -50},
+            850: {'name': "ENEMY", 'type': 14, 'x': 100, 'y': -50},
+            900: {'name': "ENEMY", 'type': 10, 'x': 120, 'y': -50},
+            920: {'name': "ENEMY", 'type': 10, 'x': 160, 'y': -50},
+            940: {'name': "ENEMY", 'type': 14, 'x': 190, 'y': -50},
+            960: {'name': "ENEMY", 'type': 10, 'x': 210, 'y': -50},
+            961: {'name': "ENEMY", 'type': 10, 'x': 230, 'y': -50},
 
             1000: {'name': "ENEMY", 'type': 10, 'x': 20, 'y': -50},
             1010: {'name': "ENEMY", 'type': 10, 'x': 40, 'y': -50},
@@ -69,25 +58,25 @@ class Level(object):
             1530: {'name': "ENEMY", 'type': 10, 'x': 200, 'y': -50},
             1540: {'name': "ENEMY", 'type': 10, 'x': 250, 'y': -50},
             1550: {'name': "ENEMY", 'type': 10, 'x': 300, 'y': -50},
-            1650: {'name': "ENEMY", 'type': 12, 'x': 150, 'y': -50},
-            1700: {'name': "ENEMY", 'type': 12, 'x': 20, 'y': -50},
 
-            1725: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
-            1750: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
-            1800: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
-            1825: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
-            2050: {'name': "BACKGROUND2", 'type': 15, 'x': 0, 'y': 0},
-            2225: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
-            2250: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
-            2200: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
-            5025: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
-            5000: {'name': "ENEMY", 'type': 10, 'x': 80, 'y': -50},
-            5010: {'name': "ENEMY", 'type': 10, 'x': 100, 'y': -50},
-            5020: {'name': "ENEMY", 'type': 10, 'x': 120, 'y': -50},
+            1651: {'name': "ENEMY", 'type': 14, 'x': 80, 'y': -50},
+            1652: {'name': "ENEMY", 'type': 14, 'x': 200, 'y': -50},
 
-            3330: {'name': "ENEMY", 'type': 10, 'x': 130, 'y': -50},
-            3340: {'name': "ENEMY", 'type': 10, 'x': 150, 'y': -50},
-            3350: {'name': "ENEMY", 'type': 10, 'x': 170, 'y': -50},
+            1950: {'name': "ENEMY", 'type': 14, 'x': 20, 'y': -50},
+            1951: {'name': "ENEMY", 'type': 14, 'x': 150, 'y': -50},
+            1952: {'name': "ENEMY", 'type': 14, 'x': 270, 'y': -50},
+
+
+            2250: {'name': "BACKGROUND2", 'type': 15, 'x': 0, 'y': 0},
+            2625: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
+
+            2825: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
+            2850: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
+            2900: {'name': "ENEMY", 'type': 13, 'x': 230, 'y': -50},
+            2925: {'name': "ENEMY", 'type': 13, 'x': 40, 'y': -50},
+
+
+
 
         }
         # Flag variables signal when to spawn things outside of the level handler

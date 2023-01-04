@@ -4,12 +4,7 @@ import pygame
 class Bullet(pygame.sprite.Sprite):
     def __init__(self):
         super(Bullet,self).__init__()
-        self.width = 2
-        self.height = self.width
-        self.size = (self.width, self.height)
-        self.image = pygame.Surface(self.size)
-        self.color = (255, 199, 0)
-        self.image.fill(self.color)
+        self.image = pygame.image.load("assets/images/bullet.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.vel_x = float(0) # these need to be floating point variables
         self.vel_y = float(0)
@@ -22,3 +17,6 @@ class Bullet(pygame.sprite.Sprite):
         self.float_y += self.vel_y
         self.rect.x = int(self.float_x)
         self.rect.y = int(self.float_y)
+        if self.rect.y >= 250:
+            print("bullet deleted")
+            self.kill()

@@ -25,19 +25,3 @@ class SpriteSheet(object):
 
         return image
 
-    ''' get_image_extend
-
-        A custom function that places 2 of the same image next to each other to create a "long" sprite
-        This is a special case for "terrain" only
-
-        (Likely won't need something like this normally)
-    '''
-    def get_image_extend(self, x, y, width, height):
-        image = pygame.Surface([width * 2, height]).convert()
-
-        image.blit(self.sprite_sheet, (0, 0), (x, y, width, height))
-        image.blit(self.sprite_sheet, (width, 0), (x, y, width, height))
-
-        image.set_colorkey((0, 0, 0))
-
-        return image        

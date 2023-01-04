@@ -1,7 +1,7 @@
 """
 20XX
-Created by JamesW
-Inspired by 1942, 1943, 1944, 19XX, and so on.
+
+
 """
 
 # ---- Imports ----
@@ -69,8 +69,6 @@ pygame.init()
 # Clock is used to cap framerate
 clock = pygame.time.Clock()
 
-# Load static images
-#background_image = pygame.image.load("assets/Images/background.png").convert()
 
 # Load the font and set the font size
 font = pygame.font.Font("assets/Fonts/upheavtt.ttf", 14)
@@ -168,12 +166,7 @@ def main():
                     if player.ammo_type == 0:
                         player.fire_delay = 150
                     if player.ammo_type == 1:
-                        # laser = Lasers(player.rect.x+10, player.rect.y, enemy_list, player.ammo_type, True)
-                        # laser.y_force = 1
-                        # laser_list.add(laser)
-                        # laser = Lasers(player.rect.x+12, player.rect.y, enemy_list, player.ammo_type, True)
-                        # laser.y_force = -1
-                        # laser_list.add(laser)
+
                         laser = Lasers(player.rect.x+4 , player.rect.y, enemy_list, player.ammo_type, True)
                         laser_list.add(laser)
                         laser = Lasers(player.rect.x + 18, player.rect.y, enemy_list, player.ammo_type, True)
@@ -187,10 +180,7 @@ def main():
                         laser = Lasers(player.rect.x+12, player.rect.y, enemy_list, player.ammo_type, True)
                         laser.y_force = -1
                         laser_list.add(laser)
-                        # laser = Lasers(player.rect.x+4 , player.rect.y, enemy_list, player.ammo_type, True)
-                        # laser_list.add(laser)
-                        # laser = Lasers(player.rect.x + 18, player.rect.y, enemy_list, player.ammo_type, True)
-                        # laser_list.add(laser)
+
 
                         player.fire_delay = 200
                     if player.ammo_type == 4:
@@ -227,28 +217,23 @@ def main():
         # -- Game Logic --
         level_data.increment()
 
+
         # Enemies
         if level_data.enemy_flag != False:  # spawn an enemy
             enemy = Enemy(level_data.enemy_flag['type'], level_data.enemy_flag['x'], level_data.enemy_flag['y'],
                           bullet_list)
-            enemy_list.add(enemy)
+            enemy_list.add(enemy) #Enemy is added to the enemy_list group
             level_data.enemy_flag = False
 
         if level_data.background_flag != False:  # background
 
             bg_group.add(bg)
-            #background.fill((30, 144, 255))
 
-            #draw_screen.fill((0, 0, 255))
             level_data.background_flag = False
 
         if level_data.background_flag2 != False:  # background
 
             bg_group2.add(bg2)
-            #background.fill((30, 144, 255))
-            print("background was added")
-
-
 
             # draw_screen.fill((0, 0, 255))
             level_data.background_flag2 = False
@@ -260,15 +245,15 @@ def main():
             # if current_num_clouds >= max_clouds:
             #     pass
             # else:
-                new_cloud = Cloud()
+            #     new_cloud = Cloud()
                 print("cloud spawned")
-                clouds_group.add(new_cloud)
+                # clouds_group.add(new_cloud)
                 current_num_clouds += 1
                 cloud_timer = pygame.time.get_ticks()
 
             # level_data.cloud_flag = False
 
-
+        #Collisions
         enemy_hit_list = pygame.sprite.spritecollide(player, enemy_list, False, pygame.sprite.collide_mask)
         for enemy in enemy_hit_list:
             if enemy.type > 0 and enemy.type < 5:
@@ -281,10 +266,6 @@ def main():
                 sfx_player_shoot.play()
 
 
-
-
-
-
         collision_bullets = pygame.sprite.spritecollide(player, bullet_list, False, pygame.sprite.collide_mask)
         for bullet in collision_bullets:
             player.death()
@@ -292,9 +273,6 @@ def main():
         enemy_player = pygame.sprite.spritecollide(player, enemy_list, False, pygame.sprite.collide_mask)
         for enemy in enemy_player:
             player.death()
-
-
-
 
 
         # Lasers
@@ -312,13 +290,6 @@ def main():
 
                         score += 100
                         sfx_enemy_die.play()
-                    # if enemy.type == 12:
-                    #
-                    #     particle_spawner.spawn_particles((laser.rect.x, laser.rect.y))
-                    #     enemy.die()
-                    #     score += 100
-                    #     sfx_player_shoot.play()
-
 
 
             if laser.player_laser == False:  # Enemy Laser hits Player
@@ -337,6 +308,7 @@ def main():
             if pygame.time.get_ticks() > player.invincible_timer:
                 player.invincible_timer = 0
 
+        #Screen Shake
         if screen_shake > 0:
             screen_shake -= 1
         render_offset = [0, 0]
@@ -356,6 +328,7 @@ def main():
         bg_group.update()
         clouds_group.update()
         bg_group2.update()
+        bullet_list.update()
 
 
 

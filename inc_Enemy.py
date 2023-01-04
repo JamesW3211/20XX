@@ -5,6 +5,7 @@ import math
 from inc_SpriteSheet import SpriteSheet
 from inc_Bullet import Bullet
 from inc_Player import Player
+from pygame import Vector2
 
 ''' Enemy
     (sprite group)
@@ -13,13 +14,15 @@ from inc_Player import Player
 
 '''
 
+
+
 class Enemy(pygame.sprite.Sprite):
 
     def __init__(self, enemy_type, start_x, start_y, bullets):
         super().__init__()
 
-        self.shoot_time = pygame.time.get_ticks() + random.randrange(0, 1000)  # delay between firing
-        self.gun_loaded = 0  # ready to fire!
+
+
         self.speed = -1  # how "fast" we scoot along the screen (negative = left)
         self.type = enemy_type
 
@@ -29,8 +32,8 @@ class Enemy(pygame.sprite.Sprite):
         self.vel_y = int(.09)
         self.bullet_angle = float(0)  # floating point precision, important!
         self.bullet_speed = float(0)
-        self.bullets = pygame.sprite.Group()
-        self.bullet_timer_max = 50
+
+        self.bullet_timer_max = 100
         self.bullet_timer = self.bullet_timer_max
 
         self.attack_pattern = 'STRAIGHT'
@@ -40,7 +43,6 @@ class Enemy(pygame.sprite.Sprite):
         self.state = self.states["FLY_DOWN"]
         self.init_State = True
         self.bullets = bullets
-        # self.hp = 0
 
 
     def load_images(self, enemy_type, start_x, start_y):
@@ -104,41 +106,67 @@ class Enemy(pygame.sprite.Sprite):
             self.animation_frames.append(image)
             self.hp = 5
 
+        if enemy_type == 15:
+            sprite_sheet = SpriteSheet("assets/Images/sprite_sheet21.png")
+            image = sprite_sheet.get_image(0, 0, 105, 64);  # (x, y, width, height)
+            self.animation_frames.append(image)
+            image = sprite_sheet.get_image(105, 0, 105, 64);  # (x, y, width, height)
+            self.animation_frames.append(image)
+            image = sprite_sheet.get_image(210, 0, 105, 64);  # (x, y, width, height)
+            self.animation_frames.append(image)
+            self.hp = 100
+
+        if enemy_type == 16:
+            sprite_sheet = SpriteSheet("assets/Images/sprite_sheet.png")
+            image = sprite_sheet.get_image(0, 24, 24, 24);  # (x, y, width, height)
+            self.animation_frames.append(image)
+            image = sprite_sheet.get_image(0, 24, 24, 24);  # (x, y, width, height)
+            self.animation_frames.append(image)
+            image = sprite_sheet.get_image(0, 24, 24, 24);  # (x, y, width, height)
+            self.animation_frames.append(image)
+            self.hp = 5
+
 
         self.image = self.animation_frames[0]  # set initial frame
         self.mask = pygame.mask.from_surface(self.image) # Create a mask for collision
-        self.rect = self.image.get_rect()
-        self.rect.x = start_x  # enemy init location (horizontal)
-        self.rect.y = start_y  # enemy init location (vertical)
+        self.rect = self.image.get_rect(center = (start_x, start_y))
+        self.pos = pygame.math.Vector2(self.rect.center)
+        self.direction = pygame.math.Vector2()
+        self.target_x, target_y = (100, 100)
+        self.enemy_velocity = 3
+        self.max_velocity = 3
+        # self.angle_radians = math.atan2(target_x - enemy_x, target_y - enemy_y)  # arctangent (trignometry!)
+        # self.angle_degrees = math.degrees(angle_radians)  # magic!
+
+
+        # self.rect.x = start_x  # enemy init location (horizontal)
+        # self.rect.y = start_y  # enemy init location (vertical)
+
         self.frame = 0  # current animation frame
         self.animation_time = 0  # animation delay speed
 
-
     def get_hit(self):
-        self.hp -= 1
+        self.hp -= 1 #Subtract Hp is enemy is hit
         if self.hp <= 0:
             self.die()
-
 
     def die(self):
         self.type = 0
         self.frame = 0
         self.load_images(self.type, self.rect.x, self.rect.y)
 
-
     def update(self, player):
 
         # PowerUps when Dead
-        if self.type == 0:  # explodey bits
+        if self.type == 0:  #Explosion
             # Animation Frames
             if pygame.time.get_ticks() > self.animation_time + 50:
                 self.animation_time = pygame.time.get_ticks()
                 self.frame = self.frame + 1
 
                 self.image = self.animation_frames[self.frame]
-            if self.frame > 3:
+            if self.frame > 3: #A powerup badge is generated
                 ran = [1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-                # turn into powerup?
                 powerup = random.choice(ran)
                 if powerup < 5:
                     print("Powerup type: ", powerup)
@@ -154,41 +182,31 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.y += 1;
             self.frame = 0
 
-        # Enemies
-        if self.type == 10:  # Scooter
+        # Enemy Types and Behavior
+        if self.type == 10:  #Kamikaze enemy
 
-            self.rect.y -= self.speed  # scoot across the screen this fast
-
-            # if pygame.time.get_ticks() > self.shoot_time + 1000:
-            #     self.shoot_time = pygame.time.get_ticks() + random.randrange(0, 1000)
-            #     self.gun_loaded = 1
+            self.rect.y -= self.speed
 
             if self.frame > 2:  # reset animation loop
                 self.frame = 0
-            self.bullets.update()
             self.rect.x += self.vel_x
             self.rect.y += self.vel_y
-            # Enemy 10 Attack Patterns and States
-            if self.state == "FLY_DOWN":
-                self.state_fly_down()
-            elif self.state == "ATTACK":
-                self.state_attack()
+            if self.rect.y >= 10: #Enemy accelerates quickly if past 10 pixels
+                self.vel_y += .2 #Double enemy speed
 
             self.image = self.animation_frames[self.frame]
 
-        if self.type == 12:  # Scooter
+        if self.type == 12:  #Enemy flys down, shoots, leaves
             self.rect.y -= self.speed  # scoot across the screen this fast
 
-            # if pygame.time.get_ticks() > self.shoot_time + 1000:
-            #     self.shoot_time = pygame.time.get_ticks() + random.randrange(0, 1000)
-            #     self.gun_loaded = 1
+
 
             if self.frame > 2:  # reset animation loop
                 self.frame = 0
-            self.bullets.update()
-            self.rect.x += self.vel_x
-            self.rect.y += self.vel_y
-            #enemy movement
+
+
+
+            # enemy movement(diagonal flight pattern)
             if self.init_State:
                 self.vel_x = 0
                 while self.vel_x == 0:
@@ -199,63 +217,71 @@ class Enemy(pygame.sprite.Sprite):
             elif self.rect.x + self.rect.width >= 320:
                 self.vel_x *= -1
 
+            self.rect.x += self.vel_x
+            self.rect.y += self.vel_y
+
 
             self.image = self.animation_frames[self.frame]
 
-        if self.type == 13:  # Scooter
-            self.rect.y -= -2  # scoot across the screen this fast
+        if self.type == 13:  #Enemy that tracks player movement
+            self.rect.y -= -2
             if self.rect.x < player.rect.x:
                 self.rect.x += int(2.0)
-                # self.rect.y -= self.speed  # scoot across the screen this fast
             if self.rect.x > player.rect.x:
                 self.rect.x -= int(2.0)
-            # if self.rect.y < player.rect.y:
-            #     self.rect.y += 1
-            #     # self.rect.y -= self.speed  # scoot across the screen this fast
-            # if self.rect.y > player.rect.y:
-            #     self.rect.y -= 2
-
-            # # if pygame.time.get_ticks() > self.shoot_time + 1000:
-            # #     self.shoot_time = pygame.time.get_ticks() + random.randrange(0, 1000)
-            # #     self.gun_loaded = 1
-            #
             if self.frame > 2:  # reset animation loop
                 self.frame = 0
-            self.bullets.update()
+
             self.rect.x += self.vel_x
             self.rect.y += self.vel_y
-            # #enemy movement
-            # if self.init_State:
-            #     self.vel_x = 0
-            #     while self.vel_x == 0:
-            #         self.vel_x = 2
-            #     self.init_State = False
-            # if self.rect.x <= 0:
-            #     self.vel_x *= -1
-            # elif self.rect.x + self.rect.width >= 320:
-            #     self.vel_x *= -1
+            # self.update_pos()
+
 
 
             self.image = self.animation_frames[self.frame]
 
-        if self.type == 14:  # Scooter
+        if self.type == 14:  #Enemy with a tri-shot
 
-            self.rect.y -= self.speed  # scoot across the screen this fast
-
-            # if pygame.time.get_ticks() > self.shoot_time + 1000:
-            #     self.shoot_time = pygame.time.get_ticks() + random.randrange(0, 1000)
-            #     self.gun_loaded = 1
+            # self.rect.y -= self.speed
+            self.attack_pattern = 'TRI_SHOT' #Enemy shoots a tri-shot
 
             if self.frame > 2:  # reset animation loop
                 self.frame = 0
-            self.bullets.update()
-            self.rect.x += self.vel_x
-            self.rect.y += self.vel_y
-            # Enemy 10 Attack Patterns and States
-            if self.state == "FLY_DOWN_2":
+
+            # Enemy 14 Attack Patterns and States
+            if self.state == "FLY_DOWN":
                 self.state_fly_down()
-            elif self.state == "ATTACK_2":
+            elif self.state == "ATTACK":
                 self.state_attack()
+
+            self.vel_y = 1
+            if self.pos == (10,0):
+                self.vel_y =3
+
+
+            # self.rect.x += self.vel_x
+            # self.rect.y += self.vel_y
+            self.update_pos()
+            # print(self.rect)
+            self.image = self.animation_frames[self.frame]
+
+        if self.type == 15:  #Another Level Testing Scrolling Background
+
+            self.rect.y -= self.speed
+
+            if pygame.time.get_ticks() > self.animation_time + 50:
+                self.animation_time = pygame.time.get_ticks()
+                self.frame = self.frame + 1
+
+            if self.frame > 2:  # reset animation loop
+                self.frame = 0
+            self.image = self.animation_frames[self.frame]
+
+        if self.type == 16:  #Kamikaze enemy
+
+            self.rect.y -= self.speed
+
+
 
             self.image = self.animation_frames[self.frame]
 
@@ -263,63 +289,28 @@ class Enemy(pygame.sprite.Sprite):
         # Offscreen, remove this sprite
         if self.rect.y > 250:
             self.kill()
-        # if self.rect.y > 240:
-        #     self.kill()
-        # if self.rect.x < -16:
-        #     self.kill()
-        # if self.rect.x > 320:
-        #     self.kill()
-        for bullet in self.bullets:
-            if bullet.rect.y >= 250:
-                self.bullets.remove(bullet)
 
+    def update_pos(self):
+        self.pos += Vector2(self.vel_x, self.vel_y)
+        self.rect.x = round(self.pos.x)
+        self.rect.y = round(self.pos.y)
 
     def state_fly_down(self):
         if self.init_State:
-            self.init_State = False
-        if self.rect.y >= 10:
-            self.vel_y += .2
-
-
-
-            # self.state = self.states["ATTACK"]
-            # self.init_State = True
-
+            self.state = self.states["ATTACK"]
 
     def state_attack(self):
-        # bullet handling
-        # if self.rect.y == 50:
-        #     self.vel_x *= -1
-        # elif self.rect.x + self.rect.width >= 240:
-        #     self.vel_x *= -1
-        # if self.init_State:
-        #     #self.vel_y = 0
-        #     self.rect.y = 50
-        #     self.rect.x += 1
-        # if self.rect.x == 240:
-        #     self.rect.x -= 5
-
 
         self.bullet_timer -= 1
         if self.bullet_timer < 0:
             self.bullet_timer = self.bullet_timer_max
 
-            # For attack patterns all we need to mess with is just the speed and angle; trig will do the rest
 
-            # Just goes straight down = boring
             if self.attack_pattern == 'STRAIGHT':
-                self.bullet_angle = 90  # remember this is in degrees (0 = "right", 90 = "down", 180 = "left", 270 = "up")
-                self.bullet_speed = .5  # how fast the bullet travels
-                self.shoot()  # actually shoot the freaking bullet
+                self.bullet_angle = 90  #This is in degrees (0 = "right", 90 = "down", 180 = "left", 270 = "up")
+                self.bullet_speed = 4  #How fast the bullet travels
+                self.shoot()  #Calls the function that shoots the bullet
 
-            # Randomly does angle and speed; not practical
-            if self.attack_pattern == 'RANDOM':  # you gotta do this, come on
-                self.bullet_angle = random.randrange(0, 360)
-                self.bullet_speed = float(random.randrange(10, 100) / 10)
-                self.bullet_timer = 10
-                self.shoot()
-
-            # Relies on the timer to make a spiral by drawing points in a circle
             if self.attack_pattern == 'SPIRAL':
                 self.bullet_angle += 10
                 self.bullet_speed = 3
@@ -327,92 +318,39 @@ class Enemy(pygame.sprite.Sprite):
                     self.bullet_timer = 1  # important! override timer so we can continuously "draw"
                 else:
                     self.bullet_angle = 0
-                    self.bullet_timer = self.bullet_timer_max * 2  # take a breath lol
+                    self.bullet_timer = self.bullet_timer_max * 2  #Delays firing
                 self.shoot()
 
-            # shoots a round thing
-            if self.attack_pattern == 'CIRCLE':
-                # bypass the timer completely; we want all bullets for this all at once
-                self.bullet_speed = .2
-                for x in range(0, 360, 5):  # start, stop, step; change "step" for circle tightness
-                    self.bullet_angle = x
-                    self.shoot()
+            if self.attack_pattern == 'TRI_SHOT':
 
-            # it's a square thing, probably
-            if self.attack_pattern == 'SQUARE':
-                # We are bypassing trig completely; just using "simple" straight lines
-                # this is the dumb non mathy way to do it lol; compare with next pattern
-                maximum_speed = 5
-                # NOTE: since FOR requires ints, you can convert to float for tighter lines
-                for dot in range(-maximum_speed, maximum_speed, 1):
-                    # Top
-                    new_bullet = Bullet()
-                    new_bullet.vel_x = dot
-                    new_bullet.vel_y = -maximum_speed
-                    new_bullet.float_x = self.rect.x + (self.rect.width // 2)
-                    new_bullet.float_y = self.rect.y + self.rect.height
-                    self.bullets.add(new_bullet)
-                    # Bottom - you could leave out the other three sections and this could just be a normal "spread" shot
-                    new_bullet = Bullet()
-                    new_bullet.vel_x = dot
-                    new_bullet.vel_y = maximum_speed
-                    new_bullet.float_x = self.rect.x + (self.rect.width // 2)
-                    new_bullet.float_y = self.rect.y + self.rect.height
-                    self.bullets.add(new_bullet)
-                    # Left
-                    new_bullet = Bullet()
-                    new_bullet.vel_x = -maximum_speed
-                    new_bullet.vel_y = dot
-                    new_bullet.float_x = self.rect.x + (self.rect.width // 2)
-                    new_bullet.float_y = self.rect.y + self.rect.height
-                    self.bullets.add(new_bullet)
-                    # Right
-                    new_bullet = Bullet()
-                    new_bullet.vel_x = maximum_speed
-                    new_bullet.vel_y = dot
-                    new_bullet.float_x = self.rect.x + (self.rect.width // 2)
-                    new_bullet.float_y = self.rect.y + self.rect.height
-                    self.bullets.add(new_bullet)
-
-            # shoots directly at the player
-            # NOTE: need to pass player (x,y) to this function in order for this to work
-            # NOTE: should calculate the middle of the sprite, but for readability just keep it to top left
-            if self.attack_pattern == 'TARGET':
-                # static location just to show targeting working
-                player_x = 320 // 2
-                player_y = 320
-                # atan2 returns the result in radians already
-                self.bullet_angle = math.degrees(math.atan2(player_y - self.rect.y, player_x - self.rect.x))
-                self.bullet_speed = .2
+                self.bullet_timer = 300
+                self.bullet_angle = 70
+                self.bullet_speed = 2
                 self.shoot()
 
-            # This is probably not practical lol
-            if self.attack_pattern == 'GOLDEN_RULE':
-                for x in range(0, 360, 5):
-                    self.bullet_angle = x
-                    self.bullet_speed = math.pi * math.radians(x)  # 3.141592...
-                    self.bullet_speed = .2
-                    self.shoot()
+                self.bullet_angle = 110
+                self.bullet_speed = 2
+                self.shoot()
 
+                self.bullet_angle = 90
+                self.bullet_speed = 2
+                self.shoot()
 
-
-    '''
-        Handles adding the bullet to the sprite group; applies trig functions with given variables
-    '''
+            if self.attack_pattern == 'RANDOM':  # you gotta do this, come on
+                self.bullet_angle = random.randrange(0, 360)
+                self.bullet_speed = float(random.randrange(10, 100) / 10)
+                self.bullet_timer = 10
+                self.shoot()
 
     def shoot(self):
         new_bullet = Bullet()
         new_bullet.vel_x = float(self.bullet_speed * math.cos(math.radians(self.bullet_angle)))
         new_bullet.vel_y = float(self.bullet_speed * math.sin(math.radians(self.bullet_angle)))
-        #print("(", new_bullet.vel_x, ", ", new_bullet.vel_y, ")")
-        new_bullet.float_x = self.rect.x + (self.rect.width // 2)
-        new_bullet.float_y = self.rect.y + self.rect.height
+        new_bullet.float_x = self.rect.x + (self.rect.width // 2 - 4)
+        new_bullet.float_y = self.rect.y + self.rect.height - 8
         self.bullets.add(new_bullet)
         print("bullet was shot")
 
-
-
     def draw(self, win):
         win.blit(self.image, self.rect)
-
 

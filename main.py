@@ -46,6 +46,7 @@ pygame.display.set_icon(icon)
 # Window mode (scaled up by Ratio)
 screen = pygame.display.set_mode([(WIDTH * ratio), (HEIGHT * ratio)])
 pygame.display.set_caption('Tutorial Spaceship Shooter')
+
 # Hide the mouse
 pygame.mouse.set_visible(False)
 

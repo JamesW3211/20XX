@@ -1,5 +1,5 @@
 import random
-import pygame - ce
+import pygame
 from inc_Star import Star
 from inc_Planet import Planet
 from inc_Clouds import Cloud

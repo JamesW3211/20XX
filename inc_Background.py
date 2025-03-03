@@ -65,7 +65,7 @@ class BG2(pygame.sprite.Sprite):
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
 
-class Clouds(pygame.sprite.Sprite):
+class Clouds(pygame.sprite.Sprite):  # cloud class
     def __init__(self):
         super(Clouds, self).__init__()
         self.image = pygame.Surface((320, 240))

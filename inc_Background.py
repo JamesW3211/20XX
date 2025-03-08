@@ -4,7 +4,7 @@ from inc_Star import Star
 from inc_Planet import Planet
 from inc_Clouds import Cloud
 
-class BG(pygame.sprite.Sprite):
+class BG(pygame.sprite.Sprite): #bg
     def __init__(self):
         super(BG, self).__init__()
         self.image = pygame.Surface((320, 240))
